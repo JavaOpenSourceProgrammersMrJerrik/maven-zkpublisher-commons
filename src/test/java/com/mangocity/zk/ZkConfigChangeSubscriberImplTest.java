@@ -46,7 +46,7 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 		});
 		System.out.println(this.zkClient.readData("/zkSample/conf/test1.properties"));
 		// this.zkClient.writeData("/zkSample/conf/test1.properties", "aa=1");
-		boolean notified = latch.await(60L, TimeUnit.SECONDS);
+		boolean notified = latch.await(10L, TimeUnit.SECONDS);
 		if (!notified)
 			fail("客户端没有收到变更通知");
 		Thread.sleep(60 * 1000L);
