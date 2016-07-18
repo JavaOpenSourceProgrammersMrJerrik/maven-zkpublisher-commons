@@ -35,27 +35,32 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 			this.zkClient.createPersistent("/zkSample/conf/test2.properties");
 	}
 
-	//step 1 运行该配置订阅者
+	// step 1 运行该配置订阅者
 	public void testSubscribe() throws IOException, InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		this.zkConfig.subscribe("test1.properties", new ConfigChangeListener() {
 			public void configChanged(String key, String value) {
-				System.out.println("test1接收到数据变更通知: key=" + key + ", value=" + value);
-				latch.countDown();
+				System.out.println("ConfigChangeListener 接收到数据变更通知: key=" + key + ", value=" + value);
+				//latch.countDown();
 			}
 		});
 		System.out.println(this.zkClient.readData("/zkSample/conf/test1.properties"));
-		// this.zkClient.writeData("/zkSample/conf/test1.properties", "aa=1");
-		boolean notified = latch.await(10L, TimeUnit.SECONDS);
-		if (!notified)
-			fail("客户端没有收到变更通知");
-		Thread.sleep(60 * 1000L);
+		latch.await(200L,TimeUnit.SECONDS);//两百秒后退出
 	}
 
-	//step 2  运行该配置发布者,当配置节点发生改变,订阅该配置的节点配置进行更新
+	// step 2 运行该配置发布者,当配置节点发生改变,订阅该配置的节点配置进行更新
 	public void testConfigPublisher() throws InterruptedException {
-		this.zkClient.writeData("/zkSample/conf/test1.properties", "test=123sd45645");
-		System.out.println(this.zkClient.readData("/zkSample/conf/test1.properties"));
+		System.out.println("动态修改配置1....begin{}");
+		this.zkClient.writeData("/zkSample/conf/test1.properties", "test=hello world");
+
+		//发布第二次配置
+		TimeUnit.SECONDS.sleep(5);
+		System.out.println("动态修改配置2....begin{}");
+		this.zkClient.writeData("/zkSample/conf/test1.properties", "test=update config");
+		
+		TimeUnit.SECONDS.sleep(3);
+		System.out.println("删除节点....begin{}");
+		this.zkClient.delete("/zkSample/conf/test1.properties");
 	}
 
 	public void testA() throws InterruptedException {
@@ -65,9 +70,5 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 		}
 
 	}
-	
-	// public void tearDown() {
-	// this.zkClient.delete("/zkSample/conf/test1.properties");
-	// this.zkClient.delete("/zkSample/conf/test2.properties");
-	// }
+
 }

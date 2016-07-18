@@ -22,7 +22,7 @@ public class ZkConfigChangeSubscriberImpl implements ConfigChangeSubscriber {
 	}
 
 	public void subscribe(String key, ConfigChangeListener listener) {
-		String path = ZkUtils.getZkPath(this.rootNode, key);
+		String path = ZkUtils.getZkPath(this.rootNode, key);///zkSample/conf/test1.properties
 		if (!this.zkClient.exists(path)) {
 			throw new RuntimeException(
 					"配置("
@@ -82,11 +82,13 @@ public class ZkConfigChangeSubscriberImpl implements ConfigChangeSubscriber {
 		}
 
 		public void handleDataChange(String s, Object obj) throws Exception {
+			System.out.println("IZkDataListener handleDataChange dataPath: " + s + " ,data: " + obj);
 			ZkConfigChangeSubscriberImpl.this.fireConfigChanged(s,
 					(String) obj, this.configListener);
 		}
 
 		public void handleDataDeleted(String s) throws Exception {
+			System.out.println("IZkDataListener handleDataDeleted dataPath: " + s);
 		}
 	}
 }
