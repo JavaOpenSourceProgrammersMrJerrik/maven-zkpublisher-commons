@@ -14,6 +14,11 @@ import com.mangocity.zk.ConfigChangeListener;
 import com.mangocity.zk.ConfigChangeSubscriber;
 import com.mangocity.zk.ZkUtils;
 
+/**
+ * 测试配置文件的发布订阅
+ * 
+ * @author mbr.yangjie
+ */
 public class ZkConfigChangeSubscriberImplTest extends TestCase {
 	private ZkClient zkClient;
 	ConfigChangeSubscriber zkConfig;
@@ -30,6 +35,7 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 			this.zkClient.createPersistent("/zkSample/conf/test2.properties");
 	}
 
+	//step 1 运行该配置订阅者
 	public void testSubscribe() throws IOException, InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		this.zkConfig.subscribe("test1.properties", new ConfigChangeListener() {
@@ -46,6 +52,12 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 		Thread.sleep(60 * 1000L);
 	}
 
+	//step 2  运行该配置发布者,当配置节点发生改变,订阅该配置的节点配置进行更新
+	public void testConfigPublisher() throws InterruptedException {
+		this.zkClient.writeData("/zkSample/conf/test1.properties", "test=123sd45645");
+		System.out.println(this.zkClient.readData("/zkSample/conf/test1.properties"));
+	}
+
 	public void testA() throws InterruptedException {
 		List<String> list = this.zkClient.getChildren("/zkSample/conf");
 		for (String s : list) {
@@ -53,13 +65,7 @@ public class ZkConfigChangeSubscriberImplTest extends TestCase {
 		}
 
 	}
-
-	public void testB() throws InterruptedException {
-		this.zkClient.writeData("/zkSample/conf/test1.properties", "test=123sd");
-		System.out.println(this.zkClient.readData("/zkSample/conf/test1.properties"));
-
-	}
-
+	
 	// public void tearDown() {
 	// this.zkClient.delete("/zkSample/conf/test1.properties");
 	// this.zkClient.delete("/zkSample/conf/test2.properties");
