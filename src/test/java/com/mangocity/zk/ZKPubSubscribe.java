@@ -8,7 +8,9 @@ import junit.framework.TestCase;
 
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
+import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -68,7 +70,8 @@ public class ZKPubSubscribe extends TestCase {
 		});
 		latch.await();
 	}
-	//往节点上写数据,如果数据发生变化,则通知监听器
+
+	// 往节点上写数据,如果数据发生变化,则通知监听器
 	public void testSubscribeDataChangesWriteData() throws InterruptedException {
 		zkClient.writeData("/lock", "testSubscribeDataChanges");
 
@@ -81,6 +84,21 @@ public class ZKPubSubscribe extends TestCase {
 
 		System.out.println("重新写入数据 begin{}");
 		zkClient.writeData("/lock", null);
+	}
+
+	public void testSubscribeStateChanges() throws InterruptedException {
+		zkClient.subscribeStateChanges(new IZkStateListener() {
+			@Override
+			public void handleStateChanged(KeeperState state) throws Exception {
+				System.out.println("handleStateChanged begin{}" + state.name());
+			}
+
+			@Override
+			public void handleNewSession() throws Exception {
+				System.out.println("handleNewSession begin{}");
+			}
+		});
+		latch.await();
 	}
 
 }

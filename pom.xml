@@ -87,11 +87,8 @@
 			</exclusions>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>com.101tec</groupId>
-			<artifactId>zkclient</artifactId>
-			<version>0.2</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.101tec</groupId> <artifactId>zkclient</artifactId> 
+			<version>0.2</version> </dependency> -->
 
 		<dependency>
 			<groupId>jline</groupId>
@@ -118,6 +115,30 @@
 		</dependency>
 
 	</dependencies>
+
+
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<name>Team Nexus Repository</name>
+			<url>http://10.10.40.58:8888/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>thirdparty</id>
+			<url>http://10.10.40.58:8888/nexus/content/repositories/thirdparty/</url>
+		</repository>
+	</distributionManagement>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>nexus</id>
+			<name>Team Nexus Repository</name>
+			<url>http://10.10.40.58:8888/nexus/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<pluginManagement>
